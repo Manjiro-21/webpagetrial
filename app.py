@@ -15,28 +15,28 @@ app.secret_key = 'x8T#@Zq9!sP$7fBnW3J$Lm&vY1'
 def home():
     return render_template('index.html')
 
-@app.route('/')
-def home():
-    return render_template('dashboard_port')
+@app.route('/dashboard_port')
+def dashboard_port():
+    return render_template('dashboard_port.html')
 
-@app.route('/')
-def home():
+@app.route('/dashboard_ship')
+def dashboard_ship():
     return render_template('dashboard_ship.html')
 
-@app.route('/')
-def home():
+@app.route('/live_feed')
+def live_feed():
     return render_template('live_feed.html')
 
-@app.route('/')
-def home():
+@app.route('/login')
+def login():
     return render_template('login.html')
 
-@app.route('/')
-def home():
+@app.route('/main_dashboard')
+def main_dashboard():
     return render_template('main_dashboard.html')
 
-@app.route('/')
-def home():
+@app.route('/register')
+def register():
     return render_template('register.html')
 
 if __name__ == '__main__':
