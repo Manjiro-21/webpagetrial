@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Port Officer Dashboard - Naval Surveillance</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+<body>
+
+<!-- Background Video -->
+<video autoplay muted loop id="bgVideo">
+  <source src="{{ url_for('static', filename='videos/drone_ship.mp4') }}" type="video/mp4">
+</video>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+  <div class="container">
+    <a class="navbar-brand" href="/">Navy Surveillance</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/port_dashboard">Port Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="/live_feed">Live Feed</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-warning" href="#" role="button" data-bs-toggle="dropdown">
+            Profile
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><span class="dropdown-item-text">👤 {{ session['username'] }}</span></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Content -->
+<div class="container mt-4 bg-dark bg-opacity-75 text-white p-4 rounded shadow">
+  <h2 class="text-warning mb-4 text-center">Port Officer Data Entry</h2>
+
+  <!-- Tab Navigation -->
+  <ul class="nav nav-tabs mb-4" id="dataTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="fishing-tab" data-bs-toggle="tab" data-bs-target="#fishing" type="button" role="tab">Fishing Boats</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="merchant-tab" data-bs-toggle="tab" data-bs-target="#merchant" type="button" role="tab">Merchant Vessels</button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content" id="dataTabsContent">
+
+    <!-- Fishing Boats Form -->
+    <div class="tab-pane fade show active" id="fishing" role="tabpanel">
+      <form method="POST" action="/submit_fishing_data">
+        <div class="row g-3">
+
+          <div class="col-md-4"><label>Boat Name</label><input type="text" name="boat_name" class="form-control" required></div>
+          <div class="col-md-4"><label>Registration No.</label><input type="text" name="reg_no" class="form-control"></div>
+          <div class="col-md-4"><label>Owner Name</label><input type="text" name="owner_name" class="form-control"></div>
+          <div class="col-md-4"><label>Port of Registration</label><input type="text" name="harbour" class="form-control"></div>
+          <div class="col-md-4"><label>No. of Crew</label><input type="number" name="crew_count" class="form-control"></div>
+          <div class="col-md-4"><label>Documents Held</label><input type="text" name="docs" class="form-control"></div>
+          <div class="col-md-4"><label>Navigation Equipment</label><input type="text" name="nav_eqpt" class="form-control"></div>
+          <div class="col-md-4"><label>Communication Equipment</label><input type="text" name="comm_eqpt" class="form-control"></div>
+          <div class="col-md-4"><label>Life Saving Equipment</label><input type="text" name="life_eqpt" class="form-control"></div>
+          <div class="col-md-4"><label>Fishing Licence</label><input type="text" name="fishing_licence" class="form-control"></div>
+          <div class="col-md-4"><label>Owner Contact</label><input type="text" name="owner_contact" class="form-control"></div>
+          <div class="col-md-4"><label>Color Code Compliant?</label><input type="text" name="color_code" class="form-control"></div>
+          <div class="col-12"><label>Remarks</label><textarea name="remarks" class="form-control" rows="2"></textarea></div>
+
+          <hr class="text-white">
+
+          <h5 class="text-warning">Intelligence Assimilation</h5>
+          <div class="col-12"><label>Sailing Pattern / Criminal Activity</label><textarea name="sailing_pattern" class="form-control" rows="2"></textarea></div>
+          <div class="col-12"><label>Type of Fishing & Gear</label><textarea name="fishing_type" class="form-control" rows="2"></textarea></div>
+          <div class="col-12"><label>Crew Strength & Identity</label><textarea name="crew_identity" class="form-control" rows="2"></textarea></div>
+          <div class="col-12"><label>Permit Validity</label><textarea name="permit_validity" class="form-control" rows="2"></textarea></div>
+          <div class="col-12"><label>Fishing Area</label><textarea name="fishing_area" class="form-control" rows="2"></textarea></div>
+          <div class="col-12"><label>History of SAR/MEDEVAC</label><textarea name="medevac" class="form-control" rows="2"></textarea></div>
+          <div class="col-12"><label>Weather Anomalies</label><textarea name="weather" class="form-control" rows="2"></textarea></div>
+          <div class="col-12"><label>Security Compliance</label><textarea name="coastal_security" class="form-control" rows="2"></textarea></div>
+          <div class="col-12"><label>Suspicious Objects</label><textarea name="suspicious_items" class="form-control" rows="2"></textarea></div>
+
+          <div class="col-12 mt-3 text-end">
+            <button type="submit" class="btn btn-success">Submit Fishing Boat Data</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Merchant Vessels Form -->
+    <div class="tab-pane fade" id="merchant" role="tabpanel">
+      <form method="POST" action="/submit_merchant_data">
+        <div class="row g-3">
+
+          <div class="col-md-3"><label>Date & Time</label><input type="datetime-local" name="datetime" class="form-control" required></div>
+          <div class="col-md-3"><label>Own Position</label><input type="text" name="own_position" class="form-control"></div>
+          <div class="col-md-3"><label>Vessel Position</label><input type="text" name="vessel_position" class="form-control"></div>
+          <div class="col-md-3"><label>Course & Speed</label><input type="text" name="co_speed" class="form-control"></div>
+          <div class="col-md-4"><label>Vessel Name</label><input type="text" name="vessel_name" class="form-control"></div>
+          <div class="col-md-4"><label>Type</label><input type="text" name="vessel_type" class="form-control"></div>
+          <div class="col-md-4"><label>Call Sign</label><input type="text" name="call_sign" class="form-control"></div>
+          <div class="col-md-4"><label>MMSI / IMO No</label><input type="text" name="mmsi_imo" class="form-control"></div>
+          <div class="col-md-4"><label>INMARSAT No</label><input type="text" name="inmarsat" class="form-control"></div>
+          <div class="col-md-4"><label>Cargo</label><input type="text" name="cargo" class="form-control"></div>
+          <div class="col-md-4"><label>LPC & ETD</label><input type="text" name="lpc_etd" class="form-control"></div>
+          <div class="col-md-4"><label>NPC & ETA</label><input type="text" name="npc_eta" class="form-control"></div>
+          <div class="col-md-4"><label>Master & Nationality</label><input type="text" name="master_nation" class="form-control"></div>
+          <div class="col-md-4"><label>Total Crew & Nationality</label><input type="text" name="crew_nation" class="form-control"></div>
+          <div class="col-md-4"><label>Flag or Port of Reg.</label><input type="text" name="flag_port" class="form-control"></div>
+
+          <hr class="text-white">
+          <h5 class="text-warning">Additional Intelligence Info</h5>
+          <div class="col-12"><label>Route History</label><textarea name="route_history" class="form-control"></textarea></div>
+          <div class="col-12"><label>Cargo Details & Issues</label><textarea name="cargo_issues" class="form-control"></textarea></div>
+          <div class="col-12"><label>Armed Guards</label><textarea name="armed_guards" class="form-control"></textarea></div>
+          <div class="col-12"><label>Conflict Zones</label><textarea name="conflict_zones" class="form-control"></textarea></div>
+          <div class="col-12"><label>Traffic in Area</label><textarea name="traffic_area" class="form-control"></textarea></div>
+          <div class="col-12"><label>SAR/MEDEVAC</label><textarea name="sar_data" class="form-control"></textarea></div>
+          <div class="col-12"><label>Weather Input</label><textarea name="weather_merchant" class="form-control"></textarea></div>
+          <div class="col-12"><label>Thuraya/Iridium Phones</label><textarea name="sat_phone" class="form-control"></textarea></div>
+          <div class="col-12"><label>Hull Survey</label><textarea name="hull_survey" class="form-control"></textarea></div>
+          <div class="col-12"><label>SOLAS Compliance</label><textarea name="solas" class="form-control"></textarea></div>
+          <div class="col-12"><label>Dangerous Cargo</label><textarea name="dangerous_cargo" class="form-control"></textarea></div>
+          <div class="col-12"><label>Agent at Port</label><textarea name="agent_port" class="form-control"></textarea></div>
+          <div class="col-12"><label>ISPS Compliance</label><textarea name="isps" class="form-control"></textarea></div>
+
+          <div class="col-12 mt-3 text-end">
+            <button type="submit" class="btn btn-success">Submit Merchant Vessel Data</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+  <!-- Bootstrap 5.3 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons (optional for social links) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+</script>
+
+<!-- Footer -->
+<footer class="site-footer bg-dark text-light mt-auto py-4 fade-footer">
+  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-start">
+    
+    <!-- Logo / Description -->
+    <div class="mb-3">
+      <h5 class="fw-bold text-warning">Navy Surveillance</h5>
+      <p style="max-width: 250px;">Maritime monitoring using drone detection and vessel intelligence to ensure coastal security and operational awareness.</p>
+    </div>
+
+    <!-- Links: Products -->
+    <div class="mb-3">
+      <h6 class="fw-bold">Tools</h6>
+      <ul class="list-unstyled">
+        <li><a href="/live_feed" class="footer-link">Live Feed</a></li>
+        <li><a href="/port_dashboard" class="footer-link">Port Dashboard</a></li>
+        <li><a href="/ship_dashboard" class="footer-link">Ship Dashboard</a></li>
+        <li><a href="/main_dashboard" class="footer-link">Main Dashboard</a></li>
+      </ul>
+    </div>
+
+    <!-- Links: Team -->
+    <div class="mb-3">
+      <h6 class="fw-bold">Support</h6>
+      <ul class="list-unstyled">
+        <li><a href="/" class="footer-link">Home</a></li>
+        <li><a href="/register" class="footer-link">Register</a></li>
+        <li><a href="/login" class="footer-link">Login</a></li>
+      </ul>
+    </div>
+
+    <!-- Social Icons -->
+    <div>
+      <h6 class="fw-bold">Connect</h6>
+      <a href="#" class="me-2 footer-link"><i class="bi bi-linkedin"></i> LinkedIn</a><br>
+      <a href="#" class="me-2 footer-link"><i class="bi bi-twitter-x"></i> X (Twitter)</a><br>
+      <a href="#" class="footer-link"><i class="bi bi-facebook"></i> Facebook</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

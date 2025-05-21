@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Main Dashboard - Naval Surveillance</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+</head>
+<body>
+
+<!-- Background Video -->
+<video autoplay muted loop id="bgVideo">
+  <source src="{{ url_for('static', filename='videos/drone_ship.mp4') }}" type="video/mp4">
+</video>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+  <div class="container">
+    <a class="navbar-brand" href="/">Navy Surveillance</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/main_dashboard">Main Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="/live_feed">Live Feed</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-warning" href="#" role="button" data-bs-toggle="dropdown">
+            Profile
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><span class="dropdown-item-text">👤 {{ session['username'] }}</span></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container mt-4 bg-dark bg-opacity-75 text-white p-4 rounded shadow">
+
+  <h2 class="text-warning text-center mb-4">Main Officer Dashboard</h2>
+
+  <!-- Officer Approvals -->
+  <div class="row">
+    <div class="col-md-6">
+      <h5 class="text-info">Pending Officers</h5>
+      <ul class="list-group">
+        {% for officer in pending %}
+        <li class="list-group-item d-flex justify-content-between align-items-center bg-secondary text-white">
+          {{ officer.name }} ({{ officer.role }})
+          <a href="/approve/{{ officer.id }}" class="btn btn-sm btn-success">Approve</a>
+        </li>
+        {% else %}
+        <li class="list-group-item text-muted">No pending approvals.</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="col-md-6">
+      <h5 class="text-info">Approved Officers</h5>
+      <ul class="list-group">
+        {% for officer in approved %}
+        <li class="list-group-item bg-dark text-white">{{ officer.name }} - {{ officer.role }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Tabs for Entry and Data -->
+  <ul class="nav nav-tabs mt-5" id="dataTabs" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#fishingTab">Fishing Data</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#merchantTab">Merchant Data</button></li>
+  </ul>
+
+  <div class="tab-content mt-3">
+
+    <!-- Fishing Data Form + Table -->
+    <div class="tab-pane fade show active" id="fishingTab">
+      <h5>Add Fishing Boat Details</h5>
+      <form method="POST" action="/add_fishing">
+        <div class="row g-3">
+          <div class="col-md-4"><input name="boat_name" class="form-control" placeholder="Boat Name" required></div>
+          <div class="col-md-4"><input name="reg_no" class="form-control" placeholder="Registration No" required></div>
+          <div class="col-md-4"><input name="owner_name" class="form-control" placeholder="Owner Name" required></div>
+          <div class="col-md-4"><input name="harbour" class="form-control" placeholder="Harbour" required></div>
+          <div class="col-md-4"><input name="crew_count" class="form-control" type="number" placeholder="Crew Count" required></div>
+          <div class="col-md-4"><input name="fishing_licence" class="form-control" placeholder="Fishing Licence" required></div>
+          <div class="col-md-4"><input name="owner_contact" class="form-control" placeholder="Owner Contact" required></div>
+          <div class="col-md-4"><input name="color_code" class="form-control" placeholder="Color Code" required></div>
+          <div class="col-md-12"><textarea name="remarks" class="form-control" placeholder="Remarks" rows="2"></textarea></div>
+          <div class="col-md-12 text-end"><button class="btn btn-warning">Submit Fishing Data</button></div>
+        </div>
+      </form>
+
+      <hr class="text-secondary">
+      <h5>Existing Fishing Records</h5>
+      <table class="table table-dark table-striped table-bordered" id="fishingTable">
+        <thead><tr><th>ID</th><th>Boat</th><th>Owner</th><th>Harbour</th><th>Licence</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for boat in fishing_data %}
+          <tr>
+            <td>{{ boat.id }}</td>
+            <td>{{ boat.boat_name }}</td>
+            <td>{{ boat.owner_name }}</td>
+            <td>{{ boat.harbour }}</td>
+            <td>{{ boat.fishing_licence }}</td>
+            <td>{% if boat.approved %}<span class="badge bg-success">Approved</span>{% else %}<span class="badge bg-warning text-dark">Pending</span>{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Merchant Data Form + Table -->
+    <div class="tab-pane fade" id="merchantTab">
+      <h5>Add Merchant Vessel Details</h5>
+      <form method="POST" action="/add_merchant">
+        <div class="row g-3">
+          <div class="col-md-4"><input name="vessel_name" class="form-control" placeholder="Vessel Name" required></div>
+          <div class="col-md-4"><input name="vessel_type" class="form-control" placeholder="Vessel Type" required></div>
+          <div class="col-md-4"><input name="call_sign" class="form-control" placeholder="Call Sign" required></div>
+          <div class="col-md-4"><input name="mmsi_imo" class="form-control" placeholder="MMSI / IMO No." required></div>
+          <div class="col-md-4"><input name="cargo" class="form-control" placeholder="Cargo" required></div>
+          <div class="col-md-4"><input name="flag_port" class="form-control" placeholder="Flag / Port" required></div>
+          <div class="col-md-12"><textarea name="route_history" class="form-control" placeholder="Route History / Remarks" rows="2"></textarea></div>
+          <div class="col-md-12 text-end"><button class="btn btn-warning">Submit Merchant Data</button></div>
+        </div>
+      </form>
+
+      <hr class="text-secondary">
+      <h5>Existing Merchant Records</h5>
+      <table class="table table-dark table-striped table-bordered" id="merchantTable">
+        <thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Call Sign</th><th>Cargo</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for ship in merchant_data %}
+          <tr>
+            <td>{{ ship.id }}</td>
+            <td>{{ ship.vessel_name }}</td>
+            <td>{{ ship.vessel_type }}</td>
+            <td>{{ ship.call_sign }}</td>
+            <td>{{ ship.cargo }}</td>
+            <td>{% if ship.approved %}<span class="badge bg-success">Approved</span>{% else %}<span class="badge bg-warning text-dark">Pending</span>{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- JS Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.js"></script>
+
+<script>
+  $(document).ready(function() {
+    $('#fishingTable').DataTable();
+    $('#merchantTable').DataTable();
+  });
+</script>
+<!-- Footer -->
+<footer class="site-footer bg-dark text-light mt-auto py-4 fade-footer">
+  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-start">
+    
+    <!-- Logo / Description -->
+    <div class="mb-3">
+      <h5 class="fw-bold text-warning">Navy Surveillance</h5>
+      <p style="max-width: 250px;">Maritime monitoring using drone detection and vessel intelligence to ensure coastal security and operational awareness.</p>
+    </div>
+
+    <!-- Links: Products -->
+    <div class="mb-3">
+      <h6 class="fw-bold">Tools</h6>
+      <ul class="list-unstyled">
+        <li><a href="/live_feed" class="footer-link">Live Feed</a></li>
+        <li><a href="/port_dashboard" class="footer-link">Port Dashboard</a></li>
+        <li><a href="/ship_dashboard" class="footer-link">Ship Dashboard</a></li>
+        <li><a href="/main_dashboard" class="footer-link">Main Dashboard</a></li>
+      </ul>
+    </div>
+
+    <!-- Links: Team -->
+    <div class="mb-3">
+      <h6 class="fw-bold">Support</h6>
+      <ul class="list-unstyled">
+        <li><a href="/" class="footer-link">Home</a></li>
+        <li><a href="/register" class="footer-link">Register</a></li>
+        <li><a href="/login" class="footer-link">Login</a></li>
+      </ul>
+    </div>
+
+    <!-- Social Icons -->
+    <div>
+      <h6 class="fw-bold">Connect</h6>
+      <a href="#" class="me-2 footer-link"><i class="bi bi-linkedin"></i> LinkedIn</a><br>
+      <a href="#" class="me-2 footer-link"><i class="bi bi-twitter-x"></i> X (Twitter)</a><br>
+      <a href="#" class="footer-link"><i class="bi bi-facebook"></i> Facebook</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

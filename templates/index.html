@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Naval Drone Surveillance</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+<!-- Background Video -->
+<video autoplay muted loop id="bgVideo">
+  <source src="{{ url_for('static', filename='videos/drone_ship.mp4') }}" type="video/mp4">
+</video>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+  <div class="container">
+    <a class="navbar-brand" href="/">Navy Surveillance</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        {% if not session.get('role') %}
+        <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+        {% else %}
+        <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+        {% if session['role'] == 'port_officer' %}
+        <li class="nav-item"><a class="nav-link" href="/port_dashboard">Port Dashboard</a></li>
+        {% elif session['role'] == 'ship_officer' %}
+        <li class="nav-item"><a class="nav-link" href="/ship_dashboard">Ship Dashboard</a></li>
+        {% elif session['role'] == 'main_officer' %}
+        <li class="nav-item"><a class="nav-link" href="/main_dashboard">Main Dashboard</a></li>
+        {% endif %}
+        <li class="nav-item"><a class="nav-link" href="/live_feed">Live Feed</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-warning" href="#" role="button" data-bs-toggle="dropdown">Profile</a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><span class="dropdown-item-text">👤 {{ session['username'] }}</span></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
+          </ul>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Intro Section with Gradient Background -->
+<div class="container mt-5 gradient-box">
+  <h3 class="text-warning">Naval Surveillance Overview</h3>
+  <p>
+    Naval surveillance involves continuously monitoring maritime areas for various reasons,
+    including national security, maritime domain awareness, and resource protection.
+    It's a critical aspect of naval operations, utilizing diverse technologies and platforms
+    to gather information and maintain a watchful eye on the seas.
+  </p>
+</div>
+
+<!-- Feature Cards Section -->
+<div class="container my-5">
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <!-- Drone -->
+    <div class="col">
+      <div class="card h-100 text-white shadow overlay-card">
+        <img src="{{ url_for('static', filename='videos/drone.jpg') }}" class="card-img-top object-fit-cover" style="height: 250px;" alt="Drone">
+        <div class="overlay">
+          <div class="overlay-text">Drones provide real-time aerial surveillance over naval zones to track vessels and targets from above.</div>
+        </div>
+        <div class="card-footer text-center bg-dark fw-bold">Drone Surveillance</div>
+      </div>
+    </div>
+
+    <!-- Merchant -->
+    <div class="col">
+      <div class="card h-100 text-white shadow overlay-card">
+        <img src="{{ url_for('static', filename='videos/merchant.jpg') }}" class="card-img-top object-fit-cover" style="height: 250px;" alt="Merchant">
+        <div class="overlay">
+          <div class="overlay-text">Tracks and analyzes merchant vessel movements, providing detailed data for identification and security operations.</div>
+        </div>
+        <div class="card-footer text-center bg-dark fw-bold">Merchant Vessel Tracking</div>
+      </div>
+    </div>
+
+    <!-- Fishing -->
+    <div class="col">
+      <div class="card h-100 text-white shadow overlay-card">
+        <img src="{{ url_for('static', filename='videos/fishingboat.jpg') }}" class="card-img-top object-fit-cover" style="height: 250px;" alt="Fishing">
+        <div class="overlay">
+          <div class="overlay-text">Monitors and verifies fishing vessel activities to prevent unauthorized operations and enhance coastal safety.</div>
+        </div>
+        <div class="card-footer text-center bg-dark fw-bold">Fishing Vessel Inspection</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Drone Surveillance Details -->
+<div class="container bg-dark text-white rounded p-4 shadow mb-5 bg-opacity-75">
+  <h3 class="text-warning">Role of Drones in Naval Surveillance</h3>
+  <p>Drones are increasingly used for naval surveillance, offering numerous advantages over traditional methods. They provide real-time intelligence, situational awareness, and can perform tasks that are dangerous or difficult for manned aircraft.</p>
+
+  <h5 class="text-info">1. Intelligence, Surveillance, and Reconnaissance (ISR)</h5>
+  <ul>
+    <li>Real-time video and imagery for rapid decision-making</li>
+    <li>Extended range operations beyond ship visibility</li>
+    <li>Autonomous, continuous surveillance routes</li>
+    <li>Integration with USVs and AUVs for joint naval ops</li>
+  </ul>
+
+  <h5 class="text-info">2. Applications</h5>
+  <ul>
+    <li>Coastal patrolling and smuggling detection</li>
+    <li>Monitoring shipping lanes for piracy threats</li>
+    <li>Assisting in oil spill assessments</li>
+    <li>Ship inspections and environmental monitoring</li>
+  </ul>
+
+  <h5 class="text-info">3. Advantages</h5>
+  <ul>
+    <li>Reduced risk for personnel</li>
+    <li>Cost-effective compared to manned missions</li>
+    <li>Highly flexible for multiple naval tasks</li>
+  </ul>
+
+  <h5 class="text-info">4. Global Usage</h5>
+  <ul>
+    <li><strong>Indian Navy:</strong> Uses Drishti-10 drones for maritime surveillance</li>
+    <li><strong>US Navy:</strong> Deploys MQ-4C Triton for ISR missions</li>
+    <li><strong>Other Navies:</strong> Broad global adoption of drone surveillance strategies</li>
+  </ul>
+</div>
+
+<!-- Footer -->
+<footer class="site-footer bg-dark text-light mt-auto py-4 fade-footer">
+  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-start">
+    
+    <!-- Logo / Description -->
+    <div class="mb-3">
+      <h5 class="fw-bold text-warning">Navy Surveillance</h5>
+      <p style="max-width: 250px;">Maritime monitoring using drone detection and vessel intelligence to ensure coastal security and operational awareness.</p>
+    </div>
+
+    <!-- Links: Products -->
+    <div class="mb-3">
+      <h6 class="fw-bold">Tools</h6>
+      <ul class="list-unstyled">
+        <li><a href="/live_feed" class="footer-link">Live Feed</a></li>
+        <li><a href="/port_dashboard" class="footer-link">Port Dashboard</a></li>
+        <li><a href="/ship_dashboard" class="footer-link">Ship Dashboard</a></li>
+        <li><a href="/main_dashboard" class="footer-link">Main Dashboard</a></li>
+      </ul>
+    </div>
+
+    <!-- Links: Team -->
+    <div class="mb-3">
+      <h6 class="fw-bold">Support</h6>
+      <ul class="list-unstyled">
+        <li><a href="/" class="footer-link">Home</a></li>
+        <li><a href="/register" class="footer-link">Register</a></li>
+        <li><a href="/login" class="footer-link">Login</a></li>
+      </ul>
+    </div>
+
+    <!-- Social Icons -->
+    <div>
+      <h6 class="fw-bold">Connect</h6>
+      <a href="#" class="me-2 footer-link"><i class="bi bi-linkedin"></i> LinkedIn</a><br>
+      <a href="#" class="me-2 footer-link"><i class="bi bi-twitter-x"></i> X (Twitter)</a><br>
+      <a href="#" class="footer-link"><i class="bi bi-facebook"></i> Facebook</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+  <!-- Bootstrap 5.3 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons (optional for social links) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</script>
+</body>
+</html>

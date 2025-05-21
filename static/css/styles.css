@@ -1,0 +1,185 @@
+/* === Background Video === */
+#bgVideo {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+  z-index: -1;
+  object-fit: cover;
+  filter: brightness(0.6);
+}
+
+/* === Intro Gradient Box === */
+.gradient-box {
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.35));
+  border-radius: 10px;
+  padding: 1.5rem;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* === Card Hover Overlay === */
+.overlay-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.overlay-card .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease-in-out;
+  text-align: center;
+  padding: 1rem;
+}
+
+.overlay-card:hover .overlay {
+  opacity: 1;
+}
+
+.overlay-text {
+  color: #fff;
+  font-size: 0.9rem;
+  max-width: 90%;
+}
+
+/* === Footer Styling with Fade In === */
+/* Fade-in footer */
+.fade-footer {
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Footer link styling */
+.footer-link {
+  color: #bbb;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #ffc107; /* Bootstrap warning color */
+  text-decoration: underline;
+}
+
+/* Ensure footer stays pinned to bottom */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.site-footer {
+  margin-top: auto;
+}
+
+
+/* === Animations === */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInFooter {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Optional Responsive Touchups === */
+@media (max-width: 768px) {
+  .gradient-box,
+  .footer {
+    padding: 1rem;
+  }
+
+  .overlay-text {
+    font-size: 0.8rem;
+  }
+}
+
+/* Centered Form Fade-In */
+.centered-form {
+  max-width: 600px;
+  margin: 8vh auto;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.3));
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.6);
+  animation: fadeIn 1.2s ease-in-out;
+  color: #fff;
+}
+
+.centered-form label {
+  color: #ccc;
+}
+
+.centered-form .btn-warning {
+  font-weight: bold;
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Adjust input spacing */
+.centered-form .form-control {
+  border-radius: 8px;
+  padding: 0.7rem;
+}
+
+/* Responsive tweak */
+@media (max-width: 768px) {
+  .centered-form {
+    padding: 1rem;
+    margin-top: 10vh;
+  }
+}
+.centered-form {
+  max-width: 600px;
+  margin: 8vh auto;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.3));
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.6);
+  animation: fadeIn 1.2s ease-in-out;
+  color: #fff;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}

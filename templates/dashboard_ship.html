@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ship Dashboard - Naval Surveillance</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+<body>
+
+<!-- Background Video -->
+<video autoplay muted loop id="bgVideo">
+  <source src="{{ url_for('static', filename='videos/drone_ship.mp4') }}" type="video/mp4">
+</video>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+  <div class="container">
+    <a class="navbar-brand" href="/">Navy Surveillance</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/ship_dashboard">Ship Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="/live_feed">Live Feed</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-warning" href="#" role="button" data-bs-toggle="dropdown">
+            Profile
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><span class="dropdown-item-text">👤 {{ session['username'] }}</span></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Content -->
+<div class="container mt-4 bg-dark bg-opacity-75 text-white p-4 rounded shadow">
+  <h2 class="text-warning text-center">Ship Officer Approval Dashboard</h2>
+
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mt-4 mb-3" id="shipTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="fishing-tab" data-bs-toggle="tab" data-bs-target="#fishing" type="button" role="tab">Fishing Boats</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="merchant-tab" data-bs-toggle="tab" data-bs-target="#merchant" type="button" role="tab">Merchant Vessels</button>
+    </li>
+  </ul>
+
+  <!-- Tab Contents -->
+  <div class="tab-content" id="shipTabsContent">
+
+    <!-- Fishing Tab -->
+    <div class="tab-pane fade show active" id="fishing" role="tabpanel">
+      <h5 class="text-light mb-3">Fishing Boats (Submitted by Port Officers)</h5>
+      <table class="table table-dark table-bordered table-hover text-center">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Boat Name</th>
+            <th>Owner</th>
+            <th>Port</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for boat in fishing_data %}
+            <tr data-bs-toggle="modal" data-bs-target="#fishingModal{{ boat.id }}">
+              <td>{{ boat.id }}</td>
+              <td>{{ boat.boat_name }}</td>
+              <td>{{ boat.owner_name }}</td>
+              <td>{{ boat.harbour }}</td>
+              <td>
+                {% if boat.approved %}
+                  <span class="badge bg-success">Approved</span>
+                {% else %}
+                  <span class="badge bg-secondary">Pending</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if not boat.approved %}
+                  <a href="/approve_fishing/{{ boat.id }}" class="btn btn-sm btn-success">Approve</a>
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </td>
+            </tr>
+
+            <!-- Modal -->
+            <div class="modal fade" id="fishingModal{{ boat.id }}" tabindex="-1">
+              <div class="modal-dialog modal-xl">
+                <div class="modal-content bg-dark text-white">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Fishing Boat Details - {{ boat.boat_name }}</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p><strong>Owner:</strong> {{ boat.owner_name }} | <strong>Registration No.:</strong> {{ boat.reg_no }}</p>
+                    <p><strong>Harbour:</strong> {{ boat.harbour }} | <strong>Crew:</strong> {{ boat.crew_count }}</p>
+                    <p><strong>Docs:</strong> {{ boat.docs }} | <strong>Nav Equip:</strong> {{ boat.nav_eqpt }}</p>
+                    <p><strong>Comm Equip:</strong> {{ boat.comm_eqpt }} | <strong>Life Equip:</strong> {{ boat.life_eqpt }}</p>
+                    <p><strong>Licence:</strong> {{ boat.fishing_licence }} | <strong>Contact:</strong> {{ boat.owner_contact }}</p>
+                    <p><strong>Color Code:</strong> {{ boat.color_code }} | <strong>Remarks:</strong> {{ boat.remarks }}</p>
+                    <hr class="text-light">
+                    <h6>Intelligence Notes</h6>
+                    <p><strong>Sailing Pattern:</strong> {{ boat.sailing_pattern }}</p>
+                    <p><strong>Fishing Type:</strong> {{ boat.fishing_type }}</p>
+                    <p><strong>Crew ID:</strong> {{ boat.crew_identity }}</p>
+                    <p><strong>Permit Validity:</strong> {{ boat.permit_validity }}</p>
+                    <p><strong>Fishing Area:</strong> {{ boat.fishing_area }}</p>
+                    <p><strong>MEDEVAC:</strong> {{ boat.medevac }}</p>
+                    <p><strong>Weather:</strong> {{ boat.weather }}</p>
+                    <p><strong>Security Compliance:</strong> {{ boat.coastal_security }}</p>
+                    <p><strong>Suspicious Objects:</strong> {{ boat.suspicious_items }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Merchant Tab -->
+    <div class="tab-pane fade" id="merchant" role="tabpanel">
+      <h5 class="text-light mb-3">Merchant Vessels (Submitted by Port Officers)</h5>
+      <table class="table table-dark table-bordered table-hover text-center">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Vessel Name</th>
+            <th>Type</th>
+            <th>Cargo</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for mv in merchant_data %}
+            <tr data-bs-toggle="modal" data-bs-target="#merchantModal{{ mv.id }}">
+              <td>{{ mv.id }}</td>
+              <td>{{ mv.vessel_name }}</td>
+              <td>{{ mv.vessel_type }}</td>
+              <td>{{ mv.cargo }}</td>
+              <td>
+                {% if mv.approved %}
+                  <span class="badge bg-success">Approved</span>
+                {% else %}
+                  <span class="badge bg-secondary">Pending</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if not mv.approved %}
+                  <a href="/approve_merchant/{{ mv.id }}" class="btn btn-sm btn-success">Approve</a>
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </td>
+            </tr>
+
+            <!-- Merchant Modal -->
+            <div class="modal fade" id="merchantModal{{ mv.id }}" tabindex="-1">
+              <div class="modal-dialog modal-xl">
+                <div class="modal-content bg-dark text-white">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Merchant Vessel Details - {{ mv.vessel_name }}</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p><strong>Call Sign:</strong> {{ mv.call_sign }}, <strong>MMSI/IMO:</strong> {{ mv.mmsi_imo }}</p>
+                    <p><strong>Inmarsat:</strong> {{ mv.inmarsat }}, <strong>Flag/Port:</strong> {{ mv.flag_port }}</p>
+                    <p><strong>Cargo:</strong> {{ mv.cargo }}</p>
+                    <hr class="text-light">
+                    <h6>Additional Intelligence</h6>
+                    <p><strong>Route:</strong> {{ mv.route_history }}</p>
+                    <p><strong>Armed Guards:</strong> {{ mv.armed_guards }}</p>
+                    <p><strong>Conflict Zones:</strong> {{ mv.conflict_zones }}</p>
+                    <p><strong>Weather:</strong> {{ mv.weather_merchant }}</p>
+                    <p><strong>SOLAS:</strong> {{ mv.solas }}</p>
+                    <p><strong>Dangerous Cargo:</strong> {{ mv.dangerous_cargo }}</p>
+                    <p><strong>ISPS:</strong> {{ mv.isps }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+  <!-- Bootstrap 5.3 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons (optional for social links) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+</script>
+<!-- Footer -->
+<footer class="site-footer bg-dark text-light mt-auto py-4 fade-footer">
+  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-start">
+    
+    <!-- Logo / Description -->
+    <div class="mb-3">
+      <h5 class="fw-bold text-warning">Navy Surveillance</h5>
+      <p style="max-width: 250px;">Maritime monitoring using drone detection and vessel intelligence to ensure coastal security and operational awareness.</p>
+    </div>
+
+    <!-- Links: Products -->
+    <div class="mb-3">
+      <h6 class="fw-bold">Tools</h6>
+      <ul class="list-unstyled">
+        <li><a href="/live_feed" class="footer-link">Live Feed</a></li>
+        <li><a href="/port_dashboard" class="footer-link">Port Dashboard</a></li>
+        <li><a href="/ship_dashboard" class="footer-link">Ship Dashboard</a></li>
+        <li><a href="/main_dashboard" class="footer-link">Main Dashboard</a></li>
+      </ul>
+    </div>
+
+    <!-- Links: Team -->
+    <div class="mb-3">
+      <h6 class="fw-bold">Support</h6>
+      <ul class="list-unstyled">
+        <li><a href="/" class="footer-link">Home</a></li>
+        <li><a href="/register" class="footer-link">Register</a></li>
+        <li><a href="/login" class="footer-link">Login</a></li>
+      </ul>
+    </div>
+
+    <!-- Social Icons -->
+    <div>
+      <h6 class="fw-bold">Connect</h6>
+      <a href="#" class="me-2 footer-link"><i class="bi bi-linkedin"></i> LinkedIn</a><br>
+      <a href="#" class="me-2 footer-link"><i class="bi bi-twitter-x"></i> X (Twitter)</a><br>
+      <a href="#" class="footer-link"><i class="bi bi-facebook"></i> Facebook</a>
+    </div>
+  </div>
+</footer>
+
+
+</body>
+</html>
